@@ -131,7 +131,9 @@ export default function DownloadPage({ url }) {
         <div className="flex gap-2 items-center">
           <a
             href={downloadBlobUrl}
-            download={`output-${Date.now()}.ts`}
+            download={`hls-downloader-${new Date()
+              .toLocaleDateString()
+              .replace(/[/]/g, "-")}.ts`}
             className="px-4 py-1.5 bg-gray-900 hover:bg-gray-700 text-white rounded-md mt-5"
           >
             Download now
