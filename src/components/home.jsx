@@ -8,6 +8,11 @@ import Layout from "./layout";
 export default function HomePage({ seturl }) {
   const [text, settext] = useState("");
   const [playlist, setplaylist] = useState();
+  const [limitationrender, setlimitationrender] = useState(false);
+
+  function toggleLimitation() {
+    setlimitationrender(!limitationrender);
+  }
 
   async function validateAndSetUrl() {
     toast.loading(`Validating...`, { duration: 800 });
@@ -34,7 +39,11 @@ export default function HomePage({ seturl }) {
           <code className="border boder-gray-200 bg-gray-100 px-1 rounded-sm">
             .m3u8
           </code>{" "}
-          uri to continue. Please don't use this service for piracy.
+          uri to continue.{" "}
+          <span className="cursor-pointer underline" onClick={toggleLimitation}>
+            See limitations
+          </span>
+          .
         </h2>
 
         <div className="w-full max-w-3xl mt-5 mb-4">
@@ -65,7 +74,7 @@ export default function HomePage({ seturl }) {
         <DialogTitle className="flex justify-between">
           <span className="text-xl font-bold">Select quality</span>
           <button className="text-sm" onClick={() => setplaylist()}>
-            Close
+            close
           </button>
         </DialogTitle>
         <DialogContent>
@@ -88,6 +97,36 @@ export default function HomePage({ seturl }) {
           </div>
         </DialogContent>
       </Dialog>
+
+      <Dialog
+        open={limitationrender}
+        onClose={toggleLimitation}
+        fullWidth
+        maxWidth="sm"
+      >
+        <DialogTitle className="flex justify-between">
+          <span className="text-xl font-bold">Limitations</span>
+          <button className="text-sm" onClick={toggleLimitation}>
+            close
+          </button>
+        </DialogTitle>
+        <DialogContent>
+          <ol className="list-decimal list-inside text-gray-700">
+            {limitations.map((limitation) => (
+              <li key={limitation}>{limitation}</li>
+            ))}
+          </ol>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
+
+const limitations = [
+  "This may request video segments from the server for download, but the browser may block the request due to CORS policy. To avoid this, you can try using some extensions.",
+  "It cannot download protected content.",
+  "It does not currently support custom headers.",
+  "Custom cookies will not be possible because the browser will ignore them.",
+  "Performance may be limited by the capabilities of the browser, the device it is running on, and the network connection.",
+  "It is not possible to download live streams.",
+];
