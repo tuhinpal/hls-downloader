@@ -123,6 +123,7 @@ export default function HomePage({ seturl }) {
 }
 
 const limitations = [
+  "It may not work on some browsers, Especially on mobile browsers.",
   "This may request video segments from the server for download, but the browser may block the request due to CORS policy. To avoid this, you can try using some extensions.",
   "It cannot download protected content.",
   "It does not currently support custom headers.",

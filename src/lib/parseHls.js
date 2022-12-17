@@ -29,15 +29,21 @@ async function parseHls({ hlsUrl }) {
     if (parser.manifest.playlists?.length) {
       let groups = parser.manifest.playlists;
 
-      groups = groups.map((g) => ({
-        name: g.attributes.NAME
-          ? g.attributes.NAME
-          : g.attributes.RESOLUTION
-          ? `${g.attributes.RESOLUTION.width}x${g.attributes.RESOLUTION.height}`
-          : g.attributes.BANDWIDTH,
-        bandwidth: g.attributes.BANDWIDTH,
-        uri: g.uri.startsWith("http") ? g.uri : base.replace("{{URL}}", g.uri),
-      }));
+      groups = groups
+        .map((g) => {
+          return {
+            name: g.attributes.NAME
+              ? g.attributes.NAME
+              : g.attributes.RESOLUTION
+              ? `${g.attributes.RESOLUTION.width}x${g.attributes.RESOLUTION.height}`
+              : `MAYBE_AUDIO:${g.attributes.BANDWIDTH}`,
+            bandwidth: g.attributes.BANDWIDTH,
+            uri: g.uri.startsWith("http")
+              ? g.uri
+              : base.replace("{{URL}}", g.uri),
+          };
+        })
+        .filter((g) => g);
 
       return {
         type: PLAYLIST,
