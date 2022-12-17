@@ -17,6 +17,10 @@ export default function HomePage({ seturl }) {
   async function validateAndSetUrl() {
     toast.loading(`Validating...`, { duration: 800 });
     let data = await parseHls({ hlsUrl: text });
+    if (!data) {
+      toast.error(`Invalid url, Content possibly not parsed!`);
+      return;
+    }
     if (data.type === ERROR) {
       toast.error(data.data);
     } else if (data.type === PLAYLIST) {
@@ -51,7 +55,7 @@ export default function HomePage({ seturl }) {
             label="Paste hls url"
             fullWidth
             size="small"
-            placeholder="Please note it should have .m3u8 in the url"
+            placeholder="Please note it should be a .m3u8 url"
             value={text}
             onChange={(e) => settext(e.target.value)}
           />
