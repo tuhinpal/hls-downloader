@@ -1,0 +1,48 @@
+{
+  "name": "hls-downloader",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 3000",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@ffmpeg/ffmpeg": "^0.11.6",
+    "@mui/material": "^5.11.0",
+    "m3u8-parser": "^6.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hot-toast": "^2.4.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.26",
+    "@types/react-dom": "^18.0.9",
+    "@vitejs/plugin-react-swc": "^3.0.0",
+    "autoprefixer": "^10.4.13",
+    "postcss": "^8.4.20",
+    "tailwindcss": "^3.2.4",
+    "vite": "^4.0.0"
+  },
+  "description": "Download HLS videos directly from your browser",
+  "main": "vite.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/tuhinpal/hls-downloader.git"
+  },
+  "keywords": [
+    "hls",
+    "downloader",
+    "video",
+    "download"
+  ],
+  "author": "Tuhin Kanti Pal <me@thetuhin.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/tuhinpal/hls-downloader/issues"
+  },
+  "homepage": "https://github.com/tuhinpal/hls-downloader#readme"
+}
