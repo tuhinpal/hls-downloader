@@ -18,6 +18,7 @@ export default function HomePage({ seturl }) {
     toast.loading(`Validating...`, { duration: 800 });
     let data = await parseHls({ hlsUrl: text });
     if (!data) {
+      // I am sure the parser lib returning, instead of throwing error
       toast.error(`Invalid url, Content possibly not parsed!`);
       return;
     }
