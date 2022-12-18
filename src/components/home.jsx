@@ -14,6 +14,10 @@ export default function HomePage({ seturl }) {
     setlimitationrender(!limitationrender);
   }
 
+  function closeQualityDialog() {
+    setplaylist();
+  }
+
   async function validateAndSetUrl() {
     toast.loading(`Validating...`, { duration: 800 });
     let data = await parseHls({ hlsUrl: text });
@@ -39,16 +43,27 @@ export default function HomePage({ seturl }) {
     <>
       <Layout>
         <h1 className="text-3xl lg:text-4xl font-bold">HLS Downloader</h1>
-        <h2 className="mt-2 max-w-lg text-center md:text-lg text-sm">
-          Download hls videos in your browser. Please enter your{" "}
+        <h2 className="mt-2 max-w-xl text-center md:text-base text-sm">
+          Download hls videos in your browser. Enter your{" "}
           <code className="border boder-gray-200 bg-gray-100 px-1 rounded-sm">
             .m3u8
           </code>{" "}
-          uri to continue.{" "}
+          uri to continue.
+          <br />
           <span className="cursor-pointer underline" onClick={toggleLimitation}>
             See limitations
           </span>
-          .
+          {" - "}
+          <span
+            className="cursor-pointer underline"
+            onClick={() => {
+              settext(
+                "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8"
+              );
+            }}
+          >
+            Try example
+          </span>
         </h2>
 
         <div className="w-full max-w-3xl mt-5 mb-4">
@@ -75,10 +90,15 @@ export default function HomePage({ seturl }) {
         </i>
       </Layout>
 
-      <Dialog open={playlist !== undefined} fullWidth maxWidth="sm">
+      <Dialog
+        open={playlist !== undefined}
+        fullWidth
+        maxWidth="sm"
+        onClose={closeQualityDialog}
+      >
         <DialogTitle className="flex justify-between">
           <span className="text-xl font-bold">Select quality</span>
-          <button className="text-sm" onClick={() => setplaylist()}>
+          <button className="text-sm" onClick={closeQualityDialog}>
             close
           </button>
         </DialogTitle>
@@ -129,7 +149,7 @@ export default function HomePage({ seturl }) {
 
 const limitations = [
   "It may not work on some browsers, Especially on mobile browsers.",
-  "This may request video segments from the server for download, but the browser may block the request due to CORS policy. To avoid this, you can try using some extensions.",
+  "This will request video segments from the server for download, but the browser may block the request due to CORS policy. To avoid this, you can try using some extensions.",
   "It cannot download protected content.",
   "It does not currently support custom headers.",
   "Custom cookies will not be possible because the browser will ignore them.",

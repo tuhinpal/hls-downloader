@@ -14,14 +14,22 @@ export default function Layout({ children }) {
         <p>
           Made by{" "}
           <a
-            className="font-medium"
+            className="font-semibold"
             target="_blank"
             rel="noopener"
             href="https://github.com/tuhinpal"
           >
             Tuhin
           </a>{" "}
-          with <span className="font-medium">React+Vite</span>
+          with{" "}
+          <a
+            className="font-semibold"
+            target="_blank"
+            rel="noopener"
+            href="https://vitejs.dev/"
+          >
+            React+Vite
+          </a>
         </p>
         <a
           href="https://github.com/tuhinpal/hls-downloader/"
