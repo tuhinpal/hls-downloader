@@ -94,7 +94,21 @@ export default function DownloadPage({ url }) {
 
       setadditionalMessage(`[INFO] Stiching segments finished`);
 
-      const data = ffmpeg.FS("readFile", "output.ts");
+      successSegments.forEach((segment) => {
+        // cleanup
+        try {
+          ffmpeg.FS("unlink", segment);
+        } catch (_) {}
+      });
+
+      let data;
+
+      try {
+        data = ffmpeg.FS("readFile", "output.ts");
+      } catch (_) {
+        throw new Error(`Something went wrong while stiching!`);
+      }
+
       setadditionalMessage();
       setdownloadState(JOB_FINISHED);
       setdownloadBlobUrl(
@@ -137,7 +151,7 @@ export default function DownloadPage({ url }) {
             href={downloadBlobUrl}
             download={`hls-downloader-${new Date()
               .toLocaleDateString()
-              .replace(/[/]/g, "-")}.ts`}
+              .replace(/[/]/g, "-")}.mp4`} // .mp4 is widely supported, and player knows the mimetype so it doesn't matter
             className="px-4 py-1.5 bg-gray-900 hover:bg-gray-700 text-white rounded-md mt-5"
           >
             Download now
