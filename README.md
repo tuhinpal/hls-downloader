@@ -8,7 +8,7 @@
 
 ## Backstory
 
-I created a browser-based HLS downloader as a software developer with a passion for video streaming and the latest web technologies. I noticed that there were fewer browser-based tools available for downloading video streams that use the HTTP Live Streaming (HLS) protocol, so I saw an opportunity to fill this gap and set out to create a website that would allow users to easily download HLS streams for offline viewing or archival purposes inside from their browser and purely client side.
+I noticed that there were fewer browser-based tools available for downloading video streams that use the HTTP Live Streaming (HLS) protocol, so I saw an opportunity to fill this gap and set out to create a website that would allow users to easily download HLS streams for offline viewing or archival purposes inside from their browser and purely client side.
 
 ## Demo
 
