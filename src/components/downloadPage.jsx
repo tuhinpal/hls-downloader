@@ -100,6 +100,10 @@ export default function DownloadPage({ url }) {
       setdownloadBlobUrl(
         URL.createObjectURL(new Blob([data.buffer], { type: "video/mp2t" }))
       );
+
+      setTimeout(() => {
+        ffmpeg.exit(); // ffmpeg.exit() is callable only after load() stage.
+      }, 1000);
     } catch (error) {
       setadditionalMessage();
       setdownloadState(DOWNLOAD_ERROR);
