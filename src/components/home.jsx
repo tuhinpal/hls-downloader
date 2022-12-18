@@ -78,10 +78,13 @@ export default function HomePage({ seturl }) {
         </div>
 
         <button
-          className="px-4 py-1.5 bg-gray-900 hover:bg-gray-700 text-white rounded-md"
+          className="px-4 py-1.5 bg-gray-900 hover:bg-gray-700 text-white rounded-md disabled:opacity-50"
           onClick={validateAndSetUrl}
+          disabled={typeof SharedArrayBuffer === "undefined"}
         >
-          Download
+          {typeof SharedArrayBuffer === "undefined"
+            ? "Browser doesn't support"
+            : "Download"}
         </button>
 
         <i className="max-w-sm text-xs text-gray-500 text-center mt-2.5">
@@ -138,7 +141,10 @@ export default function HomePage({ seturl }) {
         <DialogContent>
           <ol className="list-decimal list-inside text-gray-700">
             {limitations.map((limitation) => (
-              <li key={limitation}>{limitation}</li>
+              <li
+                key={limitation}
+                dangerouslySetInnerHTML={{ __html: limitation }}
+              />
             ))}
           </ol>
         </DialogContent>
@@ -148,7 +154,7 @@ export default function HomePage({ seturl }) {
 }
 
 const limitations = [
-  "It may not work on some browsers, Especially on mobile browsers.",
+  "It may not work on some browsers, Especially on mobile browsers. <a href='https://caniuse.com/sharedarraybuffer' class='underline' target='_blank' rel='noopener'>See supported browsers</a>.",
   "This will request video segments from the server for download, but the browser may block the request due to CORS policy. To avoid this, you can try using some extensions.",
   "It cannot download protected content.",
   "It does not currently support custom headers.",
