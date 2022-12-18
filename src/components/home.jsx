@@ -57,9 +57,7 @@ export default function HomePage({ seturl }) {
           <span
             className="cursor-pointer underline"
             onClick={() => {
-              settext(
-                "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8"
-              );
+              settext("https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8");
             }}
           >
             Try example
