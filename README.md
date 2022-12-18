@@ -1,4 +1,4 @@
-![Logo](https://export-download.canva.com/VhC2g/DAFVFYVhC2g/3/0/0001-43834262032.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAJHKNGJLC2J7OGJ6Q%2F20221217%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20221217T200427Z&X-Amz-Expires=41133&X-Amz-Signature=e51f082a7b3468a4fb68b0bdf35c497eb3bc4868feef292cab60cf04fb1feadf&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%2A%3DUTF-8%27%27HLS%2520Downloader.png&response-expires=Sun%2C%2018%20Dec%202022%2007%3A30%3A00%20GMT)
+![HLS Downloader](https://user-images.githubusercontent.com/51857187/208284362-fd90784e-2786-4505-bb75-7475a2ab1f63.png)
 
 ## Backstory
 
