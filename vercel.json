@@ -10,6 +10,10 @@
         {
           "key": "Cross-Origin-Opener-Policy",
           "value": "same-origin"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=600, must-revalidate"
         }
       ]
     }
