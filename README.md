@@ -33,4 +33,4 @@ Contributions are always welcome! Please create an issue first if you are changi
 
 ## License and Legal
 
-This project is licensed under [Apache-2.0](https://choosealicense.com/licenses/apache-2.0/). This project is made as a proof of concept and solely for educational purposes. As a user, you should not use this service for piracy. I will not be responsible if you do so. The Internet has good and bad, consume good ones.
+This project is licensed under [Apache-2.0](https://github.com/tuhinpal/hls-downloader/blob/master/LICENSE). This project is made as a proof of concept and solely for educational purposes. As a user, you should not use this service for piracy. I will not be responsible if you do so. The Internet has good and bad, consume good ones.
