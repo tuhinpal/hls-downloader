@@ -35,7 +35,7 @@ If you have any feedback, please reach out to me[at]thetuhin.com.
 
 ## Contributing
 
-Contributions are always welcome! Please create an issue first if you are changing the core principles of the project.
+Contributions are always welcome! Please create an issue first if you are changing the core principles of the project. Thank to these people and services for testing and making the product better @browserstack, @killerlearner.
 
 ## License and Legal
 
