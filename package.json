@@ -13,7 +13,6 @@
     "@emotion/styled": "^11.10.5",
     "@ffmpeg/ffmpeg": "^0.11.6",
     "@mui/material": "^5.11.0",
-    "is-shared-array-buffer": "^1.0.2",
     "m3u8-parser": "^6.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
