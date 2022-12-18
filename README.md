@@ -1,5 +1,11 @@
 ![HLS Downloader](https://user-images.githubusercontent.com/51857187/208284362-fd90784e-2786-4505-bb75-7475a2ab1f63.png)
 
+<p align="center">
+  <a href="https://www.producthunt.com/posts/hls-downloader-1?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-hls&#0045;downloader&#0045;1" target="_blank">
+    <img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=371608&theme=dark" alt="HLS&#0032;Downloader - Download&#0032;HLS&#0032;videos&#0032;directly&#0032;from&#0032;your&#0032;browser | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" />
+  </a>
+</p>
+
 ## Backstory
 
 I created a browser-based HLS downloader as a software developer with a passion for video streaming and the latest web technologies. I noticed that there were fewer browser-based tools available for downloading video streams that use the HTTP Live Streaming (HLS) protocol, so I saw an opportunity to fill this gap and set out to create a website that would allow users to easily download HLS streams for offline viewing or archival purposes inside from their browser and purely client side.
