@@ -29,7 +29,6 @@
     "vite": "^4.0.0"
   },
   "description": "Download HLS videos directly from your browser",
-  "main": "vite.config.js",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/tuhinpal/hls-downloader.git"
