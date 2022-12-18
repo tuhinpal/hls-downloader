@@ -2,11 +2,16 @@
 
 ## Backstory
 
-I created a browser-based HLS downloader as a software developer with a passion for video streaming and the latest web technologies. I noticed that there were fewer browser-based tools available for downloading video streams that use the HTTP Live Streaming (HLS) protocol, so I saw an opportunity to fill this gap and set out to create a website that would allow users to easily download HLS streams for offline viewing or archival purposes inside from their browser and purely offline.
+I created a browser-based HLS downloader as a software developer with a passion for video streaming and the latest web technologies. I noticed that there were fewer browser-based tools available for downloading video streams that use the HTTP Live Streaming (HLS) protocol, so I saw an opportunity to fill this gap and set out to create a website that would allow users to easily download HLS streams for offline viewing or archival purposes inside from their browser and purely client side.
 
 ## Demo
 
 Try it now [from here](https://hlsdownloader.thetuhin.com/). Please note it only supports [these browsers](https://caniuse.com/sharedarraybuffer).
+
+## Roadmap
+
+- [ ] Support DASH Protocol
+- [ ] Custom header Support
 
 ## Author
 
@@ -17,11 +22,6 @@ Try it now [from here](https://hlsdownloader.thetuhin.com/). Please note it only
 - [Vite](https://vitejs.dev/) as build tool.
 - [React](https://reactjs.org/) as frontend framework.
 - [ffmpeg.wasm](https://github.com/ffmpegwasm/ffmpeg.wasm) to stich segments together.
-
-## Roadmap
-
-- [ ] Support DASH Protocol
-- [ ] Custom header Support
 
 ## Feedback
 
