@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://www.producthunt.com/posts/hls-downloader-1?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-hls&#0045;downloader&#0045;1" target="_blank">
-    <img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=371608&theme=dark" alt="HLS&#0032;Downloader - Download&#0032;HLS&#0032;videos&#0032;directly&#0032;from&#0032;your&#0032;browser | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" />
+    <img src="https://api.producthunt.com/widgets/embed-image/v1/top-post-badge.svg?post_id=371608&theme=dark&period=daily" alt="HLS&#0032;Downloader - Download&#0032;HLS&#0032;videos&#0032;directly&#0032;from&#0032;your&#0032;browser | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" />
   </a>
 </p>
 
