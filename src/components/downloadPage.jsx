@@ -13,9 +13,12 @@ import {
 import Layout from "./layout";
 import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
 import parseHls from "../lib/parseHls";
+import { Switch, Tooltip } from "@mui/material";
 
-export default function DownloadPage({ url, headers }) {
+export default function DownloadPage({ url, headers = {} }) {
   const [downloadState, setdownloadState] = useState(START_DOWNLOAD);
+  const [sendHeaderWhileFetchingTS, setsendHeaderWhileFetchingTS] =
+    useState(false);
   const [additionalMessage, setadditionalMessage] = useState();
   const [downloadBlobUrl, setdownloadBlobUrl] = useState();
 
@@ -64,9 +67,9 @@ export default function DownloadPage({ url, headers }) {
             try {
               let fileId = `${segment.index}.ts`;
               let getFile = await fetch(segment.uri, {
-                // headers: {
-                //   ...headers,
-                // },
+                headers: {
+                  ...(sendHeaderWhileFetchingTS ? headers : {}),
+                },
               });
 
               if (!getFile.ok) throw new Error("File failed to fetch");
@@ -145,12 +148,28 @@ export default function DownloadPage({ url, headers }) {
       </code>
 
       {downloadState === START_DOWNLOAD && (
-        <button
-          className="px-4 py-1.5 bg-gray-900 hover:bg-gray-700 text-white rounded-md mt-5"
-          onClick={startDownload}
-        >
-          Start Download
-        </button>
+        <div className="flex gap-5 items-center mt-5">
+          {Object.keys(headers).length > 0 && (
+            <Tooltip title="Send custom header while fetching TS segments (If you are facing error, try toggling)">
+              <button
+                className="flex items-center"
+                onClick={() =>
+                  setsendHeaderWhileFetchingTS(!sendHeaderWhileFetchingTS)
+                }
+              >
+                <Switch checked={sendHeaderWhileFetchingTS} />
+                Send header
+              </button>
+            </Tooltip>
+          )}
+
+          <button
+            className="px-4 py-1.5 bg-gray-900 hover:bg-gray-700 text-white rounded-md"
+            onClick={startDownload}
+          >
+            Start Download
+          </button>
+        </div>
       )}
 
       {additionalMessage && (
