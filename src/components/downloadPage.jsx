@@ -69,6 +69,8 @@ export default function DownloadPage({ url, headers }) {
                 // },
               });
 
+              if (!getFile.ok) throw new Error("File failed to fetch");
+
               ffmpeg.FS(
                 "writeFile",
                 fileId,
