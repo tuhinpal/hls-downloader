@@ -17,7 +17,7 @@ Try it now [from here](https://hlsdownloader.thetuhin.com/). Please note it only
 ## Roadmap
 
 - [ ] Support DASH Protocol
-- [ ] Custom header Support
+- [x] Custom header Support
 
 ## Author
 

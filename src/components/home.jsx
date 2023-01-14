@@ -3,15 +3,22 @@ import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { ERROR, PLAYLIST, SEGMENT } from "../constant";
 import parseHls from "../lib/parseHls";
+import RenderCustomHeaders from "./customHeader";
 import Layout from "./layout";
 
-export default function HomePage({ seturl }) {
+export default function HomePage({ seturl, setheaders }) {
   const [text, settext] = useState("");
   const [playlist, setplaylist] = useState();
   const [limitationrender, setlimitationrender] = useState(false);
+  const [customHeadersRender, setcustomHeadersRender] = useState(false);
+  const [customHeaders, setcustomHeaders] = useState({});
 
   function toggleLimitation() {
     setlimitationrender(!limitationrender);
+  }
+
+  function toggleCustomHeaders() {
+    setcustomHeadersRender(!customHeadersRender);
   }
 
   function closeQualityDialog() {
@@ -20,7 +27,7 @@ export default function HomePage({ seturl }) {
 
   async function validateAndSetUrl() {
     toast.loading(`Validating...`, { duration: 800 });
-    let data = await parseHls({ hlsUrl: text });
+    let data = await parseHls({ hlsUrl: text, headers: customHeaders });
     if (!data) {
       // I am sure the parser lib returning, instead of throwing error
       toast.error(`Invalid url, Content possibly not parsed!`);
@@ -36,6 +43,7 @@ export default function HomePage({ seturl }) {
       }
     } else if (data.type === SEGMENT) {
       seturl(text);
+      setheaders(customHeaders);
     }
   }
 
@@ -72,6 +80,17 @@ export default function HomePage({ seturl }) {
             placeholder="Please note it should be a .m3u8 url"
             value={text}
             onChange={(e) => settext(e.target.value)}
+            // add a button
+            InputProps={{
+              endAdornment: (
+                <button
+                  className="text-gray-900 hover:text-gray-700 w-max outline-none pl-4"
+                  onClick={toggleCustomHeaders}
+                >
+                  Headers
+                </button>
+              ),
+            }}
           />
         </div>
 
@@ -113,7 +132,10 @@ export default function HomePage({ seturl }) {
                 >
                   <button
                     className="mr-2 px-2 py-1 rounded-md bg-black text-white"
-                    onClick={() => seturl(item.uri)}
+                    onClick={() => {
+                      seturl(item.uri);
+                      setheaders(customHeaders);
+                    }}
                   >
                     {item.name}
                   </button>
@@ -145,6 +167,26 @@ export default function HomePage({ seturl }) {
               />
             ))}
           </ol>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={customHeadersRender}
+        onClose={toggleCustomHeaders}
+        fullWidth
+        maxWidth="sm"
+      >
+        <DialogTitle className="flex justify-between">
+          <span className="text-xl font-bold">Custom headers</span>
+          <button className="text-sm" onClick={toggleCustomHeaders}>
+            close
+          </button>
+        </DialogTitle>
+        <DialogContent>
+          <RenderCustomHeaders
+            customHeaders={customHeaders}
+            setcustomHeader={setcustomHeaders}
+          />
         </DialogContent>
       </Dialog>
     </>

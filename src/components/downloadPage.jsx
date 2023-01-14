@@ -14,7 +14,7 @@ import Layout from "./layout";
 import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
 import parseHls from "../lib/parseHls";
 
-export default function DownloadPage({ url }) {
+export default function DownloadPage({ url, headers }) {
   const [downloadState, setdownloadState] = useState(START_DOWNLOAD);
   const [additionalMessage, setadditionalMessage] = useState();
   const [downloadBlobUrl, setdownloadBlobUrl] = useState();
@@ -26,7 +26,7 @@ export default function DownloadPage({ url }) {
     try {
       setadditionalMessage(`[INFO] Fetching segments`);
 
-      let getSegments = await parseHls({ hlsUrl: url });
+      let getSegments = await parseHls({ hlsUrl: url, headers: headers });
       if (getSegments.type !== SEGMENT)
         throw new Error(`Invalid segment url, Please refresh the page`);
 
@@ -63,7 +63,17 @@ export default function DownloadPage({ url }) {
           segmentChunk.map(async (segment) => {
             try {
               let fileId = `${segment.index}.ts`;
-              ffmpeg.FS("writeFile", fileId, await fetchFile(segment.uri));
+              let getFile = await fetch(segment.uri, {
+                // headers: {
+                //   ...headers,
+                // },
+              });
+
+              ffmpeg.FS(
+                "writeFile",
+                fileId,
+                await fetchFile(await getFile.arrayBuffer())
+              );
               successSegments.push(fileId);
               console.log(`[SUCCESS] Segment downloaded ${segment.index}`);
             } catch (error) {

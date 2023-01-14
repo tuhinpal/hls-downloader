@@ -4,12 +4,17 @@ import HomePage from "./components/home";
 
 export default function MainPage() {
   const [url, seturl] = useState();
+  const [headers, setheaders] = useState({});
 
   const segmentUrl = useMemo(() => url, [url]);
 
   return (
     <>
-      {!url ? <HomePage seturl={seturl} /> : <DownloadPage url={segmentUrl} />}
+      {!url ? (
+        <HomePage seturl={seturl} setheaders={setheaders} />
+      ) : (
+        <DownloadPage url={segmentUrl} headers={headers} />
+      )}
     </>
   );
 }
