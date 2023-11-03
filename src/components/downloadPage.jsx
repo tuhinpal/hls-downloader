@@ -33,7 +33,7 @@ export default function DownloadPage({ url, headers = {} }) {
       if (getSegments.type !== SEGMENT)
         throw new Error(`Invalid segment url, Please refresh the page`);
 
-      let segments = getSegments.data.map((s, i) => ({ ...s, index: i })); // comment out .slice
+      let segments = getSegments.data.map((s, i) => ({ ...s, index: i }));
 
       setadditionalMessage(`[INFO] Initializing ffmpeg`);
       const ffmpeg = createFFmpeg({
@@ -102,37 +102,35 @@ export default function DownloadPage({ url, headers = {} }) {
       await ffmpeg.run(
         "-i",
         `concat:${successSegments.join("|")}`,
-        "-c",
+        "-c:v",
         "copy",
-        "output.ts"
+        "output.mp4"
       );
 
       setadditionalMessage(`[INFO] Stiching segments finished`);
 
-      successSegments.forEach((segment) => {
-        // cleanup
+      for (const segment of successSegments) {
         try {
           ffmpeg.FS("unlink", segment);
         } catch (_) {}
-      });
+      }
 
-      let data;
+      let blobUrl;
 
       try {
-        data = ffmpeg.FS("readFile", "output.ts");
+        const data = ffmpeg.FS("readFile", "output.mp4");
+        blobUrl = URL.createObjectURL(
+          new Blob([data.buffer], { type: "video/mp4" })
+        );
+        ffmpeg.FS("unlink", "output.mp4");
       } catch (_) {
+        console.log("Error while creating blob url", _);
         throw new Error(`Something went wrong while stiching!`);
       }
 
       setadditionalMessage();
       setdownloadState(JOB_FINISHED);
-      setdownloadBlobUrl(
-        URL.createObjectURL(new Blob([data.buffer], { type: "video/mp2t" }))
-      );
-
-      setTimeout(() => {
-        ffmpeg.exit(); // ffmpeg.exit() is callable only after load() stage.
-      }, 1000);
+      setdownloadBlobUrl(blobUrl);
     } catch (error) {
       setadditionalMessage();
       setdownloadState(DOWNLOAD_ERROR);
