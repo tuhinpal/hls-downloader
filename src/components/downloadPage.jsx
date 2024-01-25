@@ -14,6 +14,7 @@ import Layout from "./layout";
 import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
 import parseHls from "../lib/parseHls";
 import { Switch, Tooltip } from "@mui/material";
+import * as ProgressPrimitive from "@radix-ui/react-progress";
 
 export default function DownloadPage({ url, headers = {} }) {
   const [downloadState, setdownloadState] = useState(START_DOWNLOAD);
@@ -21,6 +22,30 @@ export default function DownloadPage({ url, headers = {} }) {
     useState(false);
   const [additionalMessage, setadditionalMessage] = useState();
   const [downloadBlobUrl, setdownloadBlobUrl] = useState();
+  const [downloadStatus, setdownloadStatus] = useState({
+    segmentDownloaded: 0,
+    totalSegments: 0,
+  });
+
+  const ProgressBar = ({ value }) => (
+    <>
+      <ProgressPrimitive.Root
+        className={
+          "relative h-4 mt-2 w-[300px] overflow-hidden rounded-full bg-gray-200"
+        }
+      >
+        <ProgressPrimitive.Indicator
+          className="h-full w-full flex-1 bg-gray-900 transition-all"
+          style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
+        />
+      </ProgressPrimitive.Root>
+      <p className="text-gray-900 mt-2">{Math.round(value || 0, 2)}%</p>
+    </>
+  );
+
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
 
   async function startDownload() {
     setdownloadState(STARTING_DOWNLOAD);
@@ -34,6 +59,10 @@ export default function DownloadPage({ url, headers = {} }) {
         throw new Error(`Invalid segment url, Please refresh the page`);
 
       let segments = getSegments.data.map((s, i) => ({ ...s, index: i }));
+      setdownloadStatus({
+        totalSegments: segments.length,
+        segmentDownloaded: 0,
+      });
 
       setadditionalMessage(`[INFO] Initializing ffmpeg`);
       const ffmpeg = createFFmpeg({
@@ -74,6 +103,11 @@ export default function DownloadPage({ url, headers = {} }) {
 
               if (!getFile.ok) throw new Error("File failed to fetch");
 
+              setdownloadStatus((prev) => ({
+                ...prev,
+                segmentDownloaded: prev.segmentDownloaded + 1,
+              }));
+
               ffmpeg.FS(
                 "writeFile",
                 fileId,
@@ -98,6 +132,7 @@ export default function DownloadPage({ url, headers = {} }) {
 
       setadditionalMessage(`[INFO] Stiching segments started`);
       setdownloadState(SEGMENT_STICHING);
+      await sleep(100); // wait for state to update
 
       await ffmpeg.run(
         "-i",
@@ -108,6 +143,7 @@ export default function DownloadPage({ url, headers = {} }) {
       );
 
       setadditionalMessage(`[INFO] Stiching segments finished`);
+      await sleep(100); // wait for state to update
 
       for (const segment of successSegments) {
         try {
@@ -194,6 +230,17 @@ export default function DownloadPage({ url, headers = {} }) {
           </button>
         </div>
       )}
+
+      {downloadState === SEGMENT_STARTING_DOWNLOAD &&
+        downloadState != SEGMENT_STICHING && (
+          <ProgressBar
+            value={
+              (downloadStatus.segmentDownloaded /
+                downloadStatus.totalSegments) *
+              100
+            }
+          />
+        )}
 
       {downloadState === DOWNLOAD_ERROR && (
         <button
