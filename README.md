@@ -1,3 +1,5 @@
+[![Supported By](https://raw.githubusercontent.com/tuhinpal/tuhinpal/master/supported-by-banner.svg)](https://ddevi.com/?utm_source=tuhin_github_hls_downloader)
+
 ![HLS Downloader](https://user-images.githubusercontent.com/51857187/208284362-fd90784e-2786-4505-bb75-7475a2ab1f63.png)
 
 <p align="center">
