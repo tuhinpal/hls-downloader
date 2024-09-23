@@ -1,5 +1,6 @@
 import { Dialog, DialogContent, DialogTitle, TextField } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom"; 
 import { toast } from "react-hot-toast";
 import { ERROR, PLAYLIST, SEGMENT } from "../constant";
 import parseHls from "../lib/parseHls";
@@ -12,6 +13,7 @@ export default function HomePage({ seturl, setheaders }) {
   const [limitationrender, setlimitationrender] = useState(false);
   const [customHeadersRender, setcustomHeadersRender] = useState(false);
   const [customHeaders, setcustomHeaders] = useState({});
+  const [searchParams, setSearchParams] = useSearchParams();
 
   function toggleLimitation() {
     setlimitationrender(!limitationrender);
@@ -25,28 +27,48 @@ export default function HomePage({ seturl, setheaders }) {
     setplaylist();
   }
 
-  async function validateAndSetUrl() {
-    toast.loading(`Validating...`, { duration: 800 });
-    let data = await parseHls({ hlsUrl: text, headers: customHeaders });
-    if (!data) {
-      // I am sure the parser lib returning, instead of throwing error
-      toast.error(`Invalid url, Content possibly not parsed!`);
+   async function validateAndSetUrl(url = text) {
+    // Default to using state if no parameter is provided
+    const validUrl = url ? url.trim() : "";
+    if (!validUrl) {
+      toast.error("Please enter a valid URL.");
       return;
     }
-    if (data.type === ERROR) {
-      toast.error(data.data);
-    } else if (data.type === PLAYLIST) {
-      if (!data.data.length) {
-        toast.error(`No playlist found in the url`);
-      } else {
-        setplaylist(data.data);
+
+    try {
+      new URL(validUrl); // This will throw an error if the URL is invalid
+      toast.loading(`Validating...`, { duration: 800 });
+      let data = await parseHls({ hlsUrl: validUrl, headers: customHeaders });
+      if (!data) {
+        toast.error(`Invalid url, Content possibly not parsed!`);
+        return;
       }
-    } else if (data.type === SEGMENT) {
-      seturl(text);
-      setheaders(customHeaders);
+      if (data.type === ERROR) {
+        toast.error(data.data);
+      } else if (data.type === PLAYLIST) {
+        if (!data.data.length) {
+          toast.error(`No playlist found in the url`);
+        } else {
+          setplaylist(data.data);
+        }
+      } else if (data.type === SEGMENT) {
+        seturl(validUrl);
+        setheaders(customHeaders);
+      }
+    } catch (error) {
+      toast.error("Failed to construct 'URL': Invalid URL");
     }
   }
 
+  useEffect(() => {
+    const urlParam = searchParams.get("url");
+    if (urlParam) {
+      settext(urlParam);
+      validateAndSetUrl(urlParam); // Call validateAndSetUrl with urlParam directly
+    }
+  }, [searchParams]); // Re-run the effect if searchParams change
+
+  
   return (
     <>
       <Layout>
@@ -96,7 +118,7 @@ export default function HomePage({ seturl, setheaders }) {
 
         <button
           className="px-4 py-1.5 bg-gray-900 hover:bg-gray-700 text-white rounded-md disabled:opacity-50"
-          onClick={validateAndSetUrl}
+          onClick={() => validateAndSetUrl(text)}
           disabled={typeof SharedArrayBuffer === "undefined"}
         >
           {typeof SharedArrayBuffer === "undefined"
