@@ -9,6 +9,8 @@ import {
   SEGMENT_STICHING,
   STARTING_DOWNLOAD,
   START_DOWNLOAD,
+  SEGMENT_RETRY_ATTEMPTS,
+  SEGMENT_RETRY_DELAY
 } from "../constant";
 import Layout from "./layout";
 import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
@@ -45,6 +47,29 @@ export default function DownloadPage({ url, headers = {} }) {
 
   function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  async function fetchSegment(uri, headers) {
+    for (let i = 0; i < SEGMENT_RETRY_ATTEMPTS; i++) {
+      let s = await fetch(uri, { headers })
+
+      if (!s.ok && s.status >= 500) {
+        // retry
+        console.log(`[WARNING] Retry failed segment ${uri}`);
+        // sleep for few millis
+        await new Promise(r => setTimeout(r, SEGMENT_RETRY_DELAY));
+
+        continue;
+      }
+
+      if (i > 0) {
+        console.log(`[INFO] Segment succeeded after ${i+1} retries`)
+      }
+
+      return s;
+    }
+
+    throw new Error(`Couldn't fetch segment ${uri}`);
   }
 
   async function startDownload() {
@@ -95,13 +120,7 @@ export default function DownloadPage({ url, headers = {} }) {
           segmentChunk.map(async (segment) => {
             try {
               let fileId = `${segment.index}.ts`;
-              let getFile = await fetch(segment.uri, {
-                headers: {
-                  ...(sendHeaderWhileFetchingTS ? headers : {}),
-                },
-              });
-
-              if (!getFile.ok) throw new Error("File failed to fetch");
+              let getFile = await fetchSegment(segment.uri, sendHeaderWhileFetchingTS ? headers : {});
 
               setdownloadStatus((prev) => ({
                 ...prev,
