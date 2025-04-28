@@ -1,51 +1,65 @@
 import { Dialog, DialogContent, DialogTitle, TextField } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { ERROR, PLAYLIST, SEGMENT } from "../constant";
 import parseHls from "../lib/parseHls";
 import RenderCustomHeaders from "./customHeader";
 import Layout from "./layout";
 
-export default function HomePage({ seturl, setheaders }) {
-  const [text, settext] = useState("");
-  const [playlist, setplaylist] = useState();
-  const [limitationrender, setlimitationrender] = useState(false);
-  const [customHeadersRender, setcustomHeadersRender] = useState(false);
-  const [customHeaders, setcustomHeaders] = useState({});
+export default function HomePage({ setUrl, setHeaders }) {
+  const [text, setText] = useState("");
+  const [playlist, setPlaylist] = useState();
+  const [limitationModalOpen, setLimitationModalOpen] = useState(false);
+  const [customHeadersModalOpen, setCustomHeadersModalOpen] = useState(false);
+  const [customHeaders, setCustomHeaders] = useState({});
 
   function toggleLimitation() {
-    setlimitationrender(!limitationrender);
+    setLimitationModalOpen(!limitationModalOpen);
   }
 
   function toggleCustomHeaders() {
-    setcustomHeadersRender(!customHeadersRender);
+    setCustomHeadersModalOpen(!customHeadersModalOpen);
   }
 
   function closeQualityDialog() {
-    setplaylist();
+    setPlaylist();
   }
 
-  async function validateAndSetUrl() {
+  async function validateAndSetUrl(url) {
     toast.loading(`Validating...`, { duration: 800 });
-    let data = await parseHls({ hlsUrl: text, headers: customHeaders });
+    let data = await parseHls({ hlsUrl: url, headers: customHeaders });
     if (!data) {
       // I am sure the parser lib returning, instead of throwing error
       toast.error(`Invalid url, Content possibly not parsed!`);
       return;
     }
+
     if (data.type === ERROR) {
       toast.error(data.data);
     } else if (data.type === PLAYLIST) {
       if (!data.data.length) {
         toast.error(`No playlist found in the url`);
       } else {
-        setplaylist(data.data);
+        setPlaylist(data.data);
       }
     } else if (data.type === SEGMENT) {
-      seturl(text);
-      setheaders(customHeaders);
+      setUrl(url);
+      setHeaders(customHeaders);
     }
   }
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    try {
+      if (params.has("url")) {
+        const url = new URL(params.get("url"));
+        if (url) {
+          setText(url);
+          validateAndSetUrl(url);
+        }
+      }
+    } catch (error) {}
+  }, []);
 
   return (
     <>
@@ -74,7 +88,7 @@ export default function HomePage({ seturl, setheaders }) {
           <span
             className="cursor-pointer underline"
             onClick={() => {
-              settext("https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8");
+              setText("https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8");
             }}
           >
             Try example
@@ -88,7 +102,7 @@ export default function HomePage({ seturl, setheaders }) {
             size="small"
             placeholder="Please note it should be a .m3u8 url"
             value={text}
-            onChange={(e) => settext(e.target.value)}
+            onChange={(e) => setText(e.target.value)}
             // add a button
             InputProps={{
               endAdornment: (
@@ -105,7 +119,14 @@ export default function HomePage({ seturl, setheaders }) {
 
         <button
           className="px-4 py-1.5 bg-gray-900 hover:bg-gray-700 text-white rounded-md disabled:opacity-50"
-          onClick={validateAndSetUrl}
+          onClick={() => {
+            try {
+              const url = new URL(text);
+              validateAndSetUrl(url.href);
+            } catch (error) {
+              toast.error(error.message);
+            }
+          }}
           disabled={typeof SharedArrayBuffer === "undefined"}
         >
           {typeof SharedArrayBuffer === "undefined"
@@ -142,8 +163,8 @@ export default function HomePage({ seturl, setheaders }) {
                   <button
                     className="mr-2 px-2 py-1 rounded-md bg-black text-white"
                     onClick={() => {
-                      seturl(item.uri);
-                      setheaders(customHeaders);
+                      setUrl(item.uri);
+                      setHeaders(customHeaders);
                     }}
                   >
                     {item.name}
@@ -156,7 +177,7 @@ export default function HomePage({ seturl, setheaders }) {
       </Dialog>
 
       <Dialog
-        open={limitationrender}
+        open={limitationModalOpen}
         onClose={toggleLimitation}
         fullWidth
         maxWidth="sm"
@@ -180,7 +201,7 @@ export default function HomePage({ seturl, setheaders }) {
       </Dialog>
 
       <Dialog
-        open={customHeadersRender}
+        open={customHeadersModalOpen}
         onClose={toggleCustomHeaders}
         fullWidth
         maxWidth="sm"
@@ -194,7 +215,7 @@ export default function HomePage({ seturl, setheaders }) {
         <DialogContent>
           <RenderCustomHeaders
             customHeaders={customHeaders}
-            setcustomHeader={setcustomHeaders}
+            setcustomHeader={setCustomHeaders}
           />
         </DialogContent>
       </Dialog>
