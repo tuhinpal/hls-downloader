@@ -50,7 +50,12 @@ export default function HomePage({ seturl, setheaders }) {
   return (
     <>
       <Layout>
-        <a className="text-sm bg-gradient-to-tr from-orange-500 to-indigo-500 text-white px-4 py-2 rounded-full mb-4">
+        <a
+          className="text-sm bg-gradient-to-tr from-orange-500 to-indigo-500 text-white px-4 py-2 rounded-full mb-4"
+          href="https://github.com/tuhinpal/hls-downloader/wiki/What's-new-on-0.1.0"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           What's new
         </a>
 
