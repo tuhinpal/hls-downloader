@@ -50,6 +50,10 @@ export default function HomePage({ seturl, setheaders }) {
   return (
     <>
       <Layout>
+        <a className="text-sm bg-gradient-to-tr from-orange-500 to-indigo-500 text-white px-4 py-2 rounded-full mb-4">
+          What's new
+        </a>
+
         <h1 className="text-3xl lg:text-4xl font-bold">HLS Downloader</h1>
         <h2 className="mt-2 max-w-xl text-center md:text-base text-sm">
           Download hls videos in your browser. Enter your{" "}
