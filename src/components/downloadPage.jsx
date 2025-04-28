@@ -15,7 +15,7 @@ const DOWNLOAD_ERROR = "DOWNLOAD_ERROR";
 const STATE_NAMES = {
   JOB_FINISHED: "Download Complete",
   START_DOWNLOAD: "Ready to Download",
-  STARTING_DOWNLOAD: "Downloading in Progress",
+  STARTING_DOWNLOAD: "Download in Progress",
   DOWNLOAD_ERROR: "Download Failed",
 };
 
