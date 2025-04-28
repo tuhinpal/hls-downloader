@@ -1,15 +1,18 @@
 export const PLAYLIST = "PLAYLIST";
 export const SEGMENT = "SEGMENT";
 export const ERROR = "ERROR";
-export const TS_MIMETYPE = "video/mp2t";
-export const START_DOWNLOAD = "Download";
-export const DOWNLOAD_ERROR = "Download Error";
-export const STARTING_DOWNLOAD = "Download starting";
-export const SEGMENT_STARTING_DOWNLOAD = "Segments downloading";
-export const SEGMENT_STICHING = "Stiching segments";
-export const JOB_FINISHED = "Ready for download";
-export const SEGMENT_CHUNK_SIZE = 10;
 
+export const EVENTS = {
+  FFMPEG_LOADING: "ffmpeg_loading",
+  FFMPEG_LOADED: "ffmpeg_loaded",
+  STARTING_DOWNLOAD: "starting_download",
+  SOURCE_PARSED: "source_parsed",
+  DOWNLOADING_SEGMENTS: "downloading_segments",
+  STICHING_SEGMENTS: "stiching_segments",
+  CLEANING_UP: "cleaning_up",
+  READY_FOR_DOWNLOAD: "ready_for_download",
+  ERROR: "error",
+};
+
+export const CHUNK_DOWNLOAD_CONCURRENCY = 10;
 export const SEGMENT_RETRY_ATTEMPTS = 10;
-
-export const SEGMENT_RETRY_DELAY = 100; // ms

@@ -1,7 +1,31 @@
 import { Parser } from "m3u8-parser";
 import { ERROR, PLAYLIST, SEGMENT } from "../constant";
 
-async function parseHls({ hlsUrl, headers = {} }) {
+interface ParseHlsOptions {
+  hlsUrl: string;
+  headers?: Record<string, string>;
+}
+
+export interface Segment {
+  uri: string;
+  [key: string]: any;
+}
+
+interface Playlist {
+  name: string;
+  bandwidth: number;
+  uri: string;
+}
+
+interface ParseHlsResult {
+  type: string;
+  data: Playlist[] | Segment[] | string;
+}
+
+async function parseHls({
+  hlsUrl,
+  headers = {},
+}: ParseHlsOptions): Promise<ParseHlsResult> {
   try {
     let url = new URL(hlsUrl);
 
@@ -10,7 +34,7 @@ async function parseHls({ hlsUrl, headers = {} }) {
         ...headers,
       },
     });
-    if (!response.ok) throw new Error(response.text());
+    if (!response.ok) throw new Error(await response.text());
     let manifest = await response.text();
 
     var parser = new Parser();
@@ -31,10 +55,8 @@ async function parseHls({ hlsUrl, headers = {} }) {
     let base = url.origin + path;
 
     if (parser.manifest.playlists?.length) {
-      let groups = parser.manifest.playlists;
-
-      groups = groups
-        .map((g) => {
+      const groups = parser.manifest.playlists
+        .map((g: any) => {
           return {
             name: g.attributes.NAME
               ? g.attributes.NAME
@@ -45,27 +67,29 @@ async function parseHls({ hlsUrl, headers = {} }) {
             uri: g.uri.startsWith("http")
               ? g.uri
               : base.replace("{{URL}}", g.uri),
-          };
+          } as Playlist;
         })
-        .filter((g) => g);
+        .filter((g: Playlist | null) => g);
 
       return {
         type: PLAYLIST,
-        data: groups,
+        data: groups as Playlist[],
       };
     } else if (parser.manifest.segments?.length) {
       let segments = parser.manifest.segments;
-      segments = segments.map((s) => ({
+      segments = segments.map((s: any) => ({
         ...s,
         uri: s.uri.startsWith("http") ? s.uri : base.replace("{{URL}}", s.uri),
       }));
 
       return {
         type: SEGMENT,
-        data: segments,
+        data: segments as Segment[],
       };
     }
-  } catch (error) {
+
+    throw new Error("No playlists or segments found");
+  } catch (error: any) {
     return {
       type: ERROR,
       data: error.message,
