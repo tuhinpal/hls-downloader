@@ -9,7 +9,7 @@ import {
 import parseHls, { Segment } from "./parseHls";
 import promiseWithLimit from "./promiseWithLimit";
 
-const FFMPEG_BASE = "https://unpkg.com/@ffmpeg/core@0.12.10/dist/esm";
+const FFMPEG_BASE = "https://unpkg.com/@ffmpeg/core-mt@0.12.10/dist/esm";
 
 type OnEventFn = (event: string, data?: any) => void;
 type DownloadFileProps = {
@@ -26,11 +26,12 @@ class Downloader {
     this.onEvent = onEvent;
   }
 
-  private async getFFmpegInstance() {
+  private async setAndGetFFmpegInstance() {
     if (!this.ffmpeg) {
       this.onEvent(EVENTS.FFMPEG_LOADING);
 
       this.ffmpeg = new FFmpeg();
+
       await this.ffmpeg.load({
         coreURL: await toBlobURL(
           `${FFMPEG_BASE}/ffmpeg-core.js`,
@@ -39,6 +40,10 @@ class Downloader {
         wasmURL: await toBlobURL(
           `${FFMPEG_BASE}/ffmpeg-core.wasm`,
           "application/wasm"
+        ),
+        workerURL: await toBlobURL(
+          `${FFMPEG_BASE}/ffmpeg-core.worker.js`,
+          "text/javascript"
         ),
       });
     }
@@ -134,7 +139,7 @@ class Downloader {
     this.onEvent(EVENTS.SOURCE_PARSED);
     await this.fakeDelay(1500);
 
-    const ffmpeg = await this.getFFmpegInstance();
+    const ffmpeg = await this.setAndGetFFmpegInstance();
 
     let completed = 0;
 
