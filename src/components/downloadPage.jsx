@@ -53,6 +53,7 @@ export default function DownloadPage({ url, headers = {} }) {
               setAdditionalMessage(`[INFO] Segments information fetched`);
               break;
             case EVENTS.DOWNLOADING_SEGMENTS:
+              setAdditionalMessage(`[INFO] Fetching segments`);
               setDownloadStatus({
                 completed: data.completed,
                 total: data.total,
