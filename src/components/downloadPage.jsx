@@ -13,10 +13,10 @@ const JOB_FINISHED = "JOB_FINISHED";
 const DOWNLOAD_ERROR = "DOWNLOAD_ERROR";
 
 const STATE_NAMES = {
-  JOB_FINISHED: "Download Complete",
+  JOB_FINISHED: "Finished Downloading",
   START_DOWNLOAD: "Ready to Download",
   STARTING_DOWNLOAD: "Download in Progress",
-  DOWNLOAD_ERROR: "Download Failed",
+  DOWNLOAD_ERROR: "Failed to Download",
 };
 
 export default function DownloadPage({ url, headers = {} }) {
