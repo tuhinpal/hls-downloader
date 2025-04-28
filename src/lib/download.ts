@@ -9,7 +9,8 @@ import {
 import parseHls, { Segment } from "./parseHls";
 import promiseWithLimit from "./promiseWithLimit";
 
-const FFMPEG_BASE = "https://unpkg.com/@ffmpeg/core-mt@0.12.10/dist/esm";
+const FFMPEG_BASE =
+  "https://cdn.jsdelivr.net/npm/@ffmpeg/core-mt@0.12.9/dist/esm";
 
 type OnEventFn = (event: string, data?: any) => void;
 type DownloadFileProps = {
@@ -165,7 +166,12 @@ class Downloader {
       downloadConcurrency
     );
 
-    this.onEvent(EVENTS.STICHING_SEGMENTS);
+    ffmpeg.on("progress", ({ progress }) => {
+      this.onEvent(EVENTS.STICHING_SEGMENTS, {
+        total: 100,
+        completed: Math.floor(progress * 100),
+      });
+    });
 
     await ffmpeg.exec([
       "-i",

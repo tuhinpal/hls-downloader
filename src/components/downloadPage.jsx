@@ -26,8 +26,8 @@ export default function DownloadPage({ url, headers = {} }) {
   const [additionalMessage, setAdditionalMessage] = useState();
   const [downloadBlobUrl, setDownloadBlobUrl] = useState();
   const [downloadStatus, setDownloadStatus] = useState({
-    segmentDownloaded: 0,
-    totalSegments: 0,
+    completed: 0,
+    total: 0,
   });
 
   async function startDownload() {
@@ -54,12 +54,16 @@ export default function DownloadPage({ url, headers = {} }) {
               break;
             case EVENTS.DOWNLOADING_SEGMENTS:
               setDownloadStatus({
-                segmentDownloaded: data.completed,
-                totalSegments: data.total,
+                completed: data.completed,
+                total: data.total,
               });
               break;
             case EVENTS.STICHING_SEGMENTS:
-              setAdditionalMessage(`[INFO] Stiching segments started`);
+              setAdditionalMessage(`[INFO] Stiching segments`);
+              setDownloadStatus({
+                completed: data.completed,
+                total: data.total,
+              });
               break;
             case EVENTS.CLEANING_UP:
               setAdditionalMessage(`[INFO] Cleaning up temporary files`);
@@ -139,7 +143,7 @@ export default function DownloadPage({ url, headers = {} }) {
 
           <button
             onClick={() => window.location.reload()}
-            className="px-4 py-1.5 bg-gray-900 hover:bg-gray-700 text-white rounded-md mt-5"
+            className="px-4 py-1.5 border rounded-md mt-5"
           >
             Create new
           </button>
@@ -148,10 +152,7 @@ export default function DownloadPage({ url, headers = {} }) {
 
       {downloadState === STARTING_DOWNLOAD && (
         <ProgressBar
-          value={
-            (downloadStatus.segmentDownloaded / downloadStatus.totalSegments) *
-              100 || 0
-          }
+          value={(downloadStatus.completed / downloadStatus.total) * 100 || 0}
         />
       )}
 
