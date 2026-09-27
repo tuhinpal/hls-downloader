@@ -8,6 +8,16 @@
   </a>
 </p>
 
+## Notice to All Piracy Sites
+
+Please stop using this project or linking to hlsdownloader.thetuhin.com for any piracy-related activities. I do not want to be involved in or face any legal issues resulting from actions taken by third parties.
+
+I hope you understand and respect this request.
+
+For this reason, I am disabling hyperlinking through the `?url=` parameter.
+
+I apologize for any inconvenience this may cause to genuine users, and I appreciate your understanding.
+
 ## Backstory
 
 I noticed that there were fewer browser-based tools available for downloading video streams that use the HTTP Live Streaming (HLS) protocol, so I saw an opportunity to fill this gap and set out to create a website that would allow users to easily download HLS streams for offline viewing or archival purposes inside from their browser and purely client side.

@@ -1,5 +1,5 @@
 import { Dialog, DialogContent, DialogTitle, TextField } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { ERROR, PLAYLIST, SEGMENT } from "../constant";
 import parseHls from "../lib/parseHls";
@@ -47,19 +47,6 @@ export default function HomePage({ setUrl, setHeaders }) {
       setHeaders(customHeaders);
     }
   }
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    try {
-      if (params.has("url")) {
-        const url = new URL(params.get("url"));
-        if (url) {
-          setText(url);
-          validateAndSetUrl(url);
-        }
-      }
-    } catch (error) {}
-  }, []);
 
   return (
     <>
