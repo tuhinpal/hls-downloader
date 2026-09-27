@@ -53,7 +53,7 @@ export default function HomePage({ setUrl, setHeaders }) {
       <Layout>
         <a
           className="text-sm bg-gradient-to-tr from-orange-500 to-indigo-500 text-white px-4 py-2 rounded-full mb-4"
-          href="https://github.com/tuhinpal/hls-downloader/wiki/What's-new-on-0.1.0"
+          href="https://github.com/tuhinpal/hls-downloader/wiki/What's-new-on-1.0.0"
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -114,11 +114,8 @@ export default function HomePage({ setUrl, setHeaders }) {
               toast.error(error.message);
             }
           }}
-          disabled={typeof SharedArrayBuffer === "undefined"}
         >
-          {typeof SharedArrayBuffer === "undefined"
-            ? "Browser doesn't support"
-            : "Download"}
+          Download
         </button>
 
         <i className="max-w-sm text-xs text-gray-500 text-center mt-2.5">
@@ -211,10 +208,9 @@ export default function HomePage({ setUrl, setHeaders }) {
 }
 
 const limitations = [
-  "It may not work on some browsers, Especially on mobile browsers. <a href='https://caniuse.com/sharedarraybuffer' class='underline' target='_blank' rel='noopener'>See supported browsers</a>.",
+  "Saving directly to disk needs a Chromium-based desktop browser. Other browsers keep the file in browser storage (or memory) until you click Download now.",
   "This will request video segments from the server for download, but the browser may block the request due to CORS policy. To avoid this, you can try using some extensions.",
   "It cannot download protected content.",
-  "It does not currently support custom headers.",
   "Custom cookies will not be possible because the browser will ignore them.",
   "Performance may be limited by the capabilities of the browser, the device it is running on, and the network connection.",
   "It is not possible to download live streams.",

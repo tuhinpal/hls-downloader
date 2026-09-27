@@ -1,8 +1,12 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { EVENTS } from "../constant";
 import Layout from "./layout";
-import Downloader from "../lib/download";
+import {
+  DownloadCancelledError,
+  HlsDownloader,
+  OutputSink,
+} from "../lib/downloader";
 import { Switch, Tooltip } from "@mui/material";
 import { ProgressBar } from "./ui/progress";
 
@@ -19,76 +23,95 @@ const STATE_NAMES = {
   DOWNLOAD_ERROR: "Failed to Download",
 };
 
+function formatBytes(bytes) {
+  if (bytes < 1024 ** 2) return `${(bytes / 1024).toFixed(0)} KB`;
+  if (bytes < 1024 ** 3) return `${(bytes / 1024 ** 2).toFixed(1)} MB`;
+  return `${(bytes / 1024 ** 3).toFixed(2)} GB`;
+}
+
 export default function DownloadPage({ url, headers = {} }) {
   const [downloadState, setDownloadState] = useState(START_DOWNLOAD);
   const [sendHeaderWhileFetchingTS, setSendHeaderWhileFetchingTS] =
     useState(false);
   const [additionalMessage, setAdditionalMessage] = useState();
-  const [downloadBlobUrl, setDownloadBlobUrl] = useState();
+  const [downloadResult, setDownloadResult] = useState();
   const [downloadStatus, setDownloadStatus] = useState({
     completed: 0,
     total: 0,
   });
+  const downloaderRef = useRef();
 
   async function startDownload() {
+    const fileName = `hls-downloader-${new Date()
+      .toLocaleDateString()
+      .replace(/[/]/g, "-")}.mp4`;
+
+    // Must run first: the save dialog needs the click's user activation
+    let sink;
+    try {
+      sink = await OutputSink.create(fileName);
+    } catch (error) {
+      if (error.name !== "AbortError") {
+        toast.error(error.message || "Could not open the output file");
+      }
+      return;
+    }
+
     setDownloadState(STARTING_DOWNLOAD);
     setAdditionalMessage(`[INFO] Job started`);
 
+    const downloader = new HlsDownloader({
+      onEvent: (event, data) => {
+        switch (event) {
+          case EVENTS.PREPARING:
+            setAdditionalMessage(`[INFO] Fetching playlist`);
+            break;
+          case EVENTS.SOURCE_PARSED:
+            setAdditionalMessage(`[INFO] Found ${data.total} segments`);
+            setDownloadStatus({ completed: 0, total: data.total });
+            break;
+          case EVENTS.DOWNLOADING_SEGMENTS:
+            setAdditionalMessage(
+              `[INFO] Processed ${data.completed}/${data.total} segments · ${formatBytes(data.bytes)}`
+            );
+            setDownloadStatus({
+              completed: data.completed,
+              total: data.total,
+            });
+            break;
+          case EVENTS.FINALIZING:
+            setAdditionalMessage(`[INFO] Finalizing file`);
+            break;
+          case EVENTS.READY_FOR_DOWNLOAD:
+            setAdditionalMessage(`[INFO] Download ready!`);
+            break;
+        }
+      },
+    });
+    downloaderRef.current = downloader;
+
     try {
-      const downloader = new Downloader({
-        onEvent: (event, data) => {
-          console.log(`Event: ${event}`, data);
-
-          switch (event) {
-            case EVENTS.FFMPEG_LOADING:
-              setAdditionalMessage(`[INFO] Initializing ffmpeg`);
-              break;
-            case EVENTS.FFMPEG_LOADED:
-              setAdditionalMessage(`[SUCCESS] ffmpeg loaded`);
-              break;
-            case EVENTS.STARTING_DOWNLOAD:
-              setAdditionalMessage(`[INFO] Fetching segments`);
-              break;
-            case EVENTS.SOURCE_PARSED:
-              setAdditionalMessage(`[INFO] Segments information fetched`);
-              break;
-            case EVENTS.DOWNLOADING_SEGMENTS:
-              setAdditionalMessage(`[INFO] Fetching segments`);
-              setDownloadStatus({
-                completed: data.completed,
-                total: data.total,
-              });
-              break;
-            case EVENTS.STICHING_SEGMENTS:
-              setAdditionalMessage(`[INFO] Stiching segments`);
-              setDownloadStatus({
-                completed: data.completed,
-                total: data.total,
-              });
-              break;
-            case EVENTS.CLEANING_UP:
-              setAdditionalMessage(`[INFO] Cleaning up temporary files`);
-              break;
-            case EVENTS.READY_FOR_DOWNLOAD:
-              setAdditionalMessage(`[INFO] Download ready!`);
-              break;
-          }
-        },
-      });
-
-      const result = await downloader.startDownload({
+      const result = await downloader.download({
         url,
         headers: sendHeaderWhileFetchingTS ? headers : {},
+        sink,
       });
 
-      setDownloadBlobUrl(result.blobURL);
+      setDownloadResult(result);
       setDownloadState(JOB_FINISHED);
       setAdditionalMessage();
     } catch (error) {
+      if (error instanceof DownloadCancelledError) {
+        setDownloadState(START_DOWNLOAD);
+        setAdditionalMessage(`[INFO] Download cancelled`);
+        return;
+      }
       console.error("Download error:", error);
       setAdditionalMessage();
       setDownloadState(DOWNLOAD_ERROR);
       toast.error(error.message || "An error occurred during download");
+    } finally {
+      downloaderRef.current = undefined;
     }
   }
 
@@ -130,17 +153,23 @@ export default function DownloadPage({ url, headers = {} }) {
         <p className="text-gray-900 mt-5">{additionalMessage}</p>
       )}
 
-      {downloadBlobUrl && (
+      {downloadResult?.kind === "saved" && (
+        <p className="text-gray-900 mt-5">
+          Saved to <b>{downloadResult.fileName}</b>
+        </p>
+      )}
+
+      {downloadResult && (
         <div className="flex gap-2 items-center">
-          <a
-            href={downloadBlobUrl}
-            download={`hls-downloader-${new Date()
-              .toLocaleDateString()
-              .replace(/[/]/g, "-")}.mp4`}
-            className="px-4 py-1.5 bg-gray-900 hover:bg-gray-700 text-white rounded-md mt-5"
-          >
-            Download now
-          </a>
+          {downloadResult.kind === "blob" && (
+            <a
+              href={downloadResult.url}
+              download={downloadResult.fileName}
+              className="px-4 py-1.5 bg-gray-900 hover:bg-gray-700 text-white rounded-md mt-5"
+            >
+              Download now
+            </a>
+          )}
 
           <button
             onClick={() => window.location.reload()}
@@ -152,9 +181,17 @@ export default function DownloadPage({ url, headers = {} }) {
       )}
 
       {downloadState === STARTING_DOWNLOAD && (
-        <ProgressBar
-          value={(downloadStatus.completed / downloadStatus.total) * 100 || 0}
-        />
+        <>
+          <ProgressBar
+            value={(downloadStatus.completed / downloadStatus.total) * 100 || 0}
+          />
+          <button
+            onClick={() => downloaderRef.current?.cancel()}
+            className="px-4 py-1.5 border rounded-md mt-5"
+          >
+            Cancel
+          </button>
+        </>
       )}
 
       {downloadState === DOWNLOAD_ERROR && (

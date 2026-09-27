@@ -24,7 +24,7 @@ I noticed that there were fewer browser-based tools available for downloading vi
 
 ## Demo
 
-Try it now [from here](https://hlsdownloader.thetuhin.com/). Please note it only supports [these browsers](https://caniuse.com/sharedarraybuffer).
+Try it now [from here](https://hlsdownloader.thetuhin.com/). On Chromium-based desktop browsers the video is streamed straight to disk.
 
 ## Roadmap
 
@@ -39,7 +39,7 @@ Try it now [from here](https://hlsdownloader.thetuhin.com/). Please note it only
 
 - [Vite](https://vitejs.dev/) as build tool.
 - [React](https://reactjs.org/) as frontend framework.
-- [ffmpeg.wasm](https://github.com/ffmpegwasm/ffmpeg.wasm) to stich segments together.
+- [Mediabunny](https://mediabunny.dev/) to remux segments into MP4.
 
 ## Feedback
 
